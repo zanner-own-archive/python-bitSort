@@ -6,7 +6,7 @@ class bitSort :
 		self.maskInput, self.orderInput = mask, order
 		if up==None : up = ['u', 'U', '1', '+', 1]
 		if down==None : down = ['d', 'D', '0', '-', 0]
-		mask = map(lambda x : int(x), mask)
+		mask = map(lambda x : str(x), mask)
 		offset = range(0, len(mask))
 		offset.reverse()
 		order = map(lambda x : 1 if x in up else -1 if x in down else 0, order)
@@ -63,29 +63,29 @@ from sys import argv
 
 p = ArgumentParser(add_help=True, prefix_chars='-', prog='bitSort', description='...', epilog='buy')
 #p.add_argument('-n', dest='mo', help='bit-mask & bit-order, like: 8u1d7d2u6u3d5d4u')
-p.add_argument('-m', '--mask', dest='m', help='bit-mask, like: 81726354')
-p.add_argument('-o', '--order', dest='o', help='bit-order, like: udduuddu')
+p.add_argument('-m', '--mask', dest='m', help='bit-mask, like: A981726354')
+p.add_argument('-o', '--order', dest='o', help='bit-order, like: ddudduuddu')
 p.add_argument('-v', '--value', dest='v', nargs='*', default='1-10', help='values, like: 1,2 3 7-10, 20-30+3')
 p.add_argument('-b', '--binary', dest='b', action='store_true', default=None, help='binary input & output')
 p.add_argument('-bi', '--binary-input', dest='bi', action='store_true', default=None, help='binary input')
 p.add_argument('-bo', '--binary-ouput', dest='bo', action='store_true', default=None, help='binary output')
-run, runUnknown = p.parse_known_args(argv)
+run, runUnknown = p.parse_known_args(argv[1:])
 
 if run.m==None or run.o==None or run.v==None : exit(0)
 
 import re
-RE = ('^ ([\d]+) $', '^ ([ud\-\+01]+) $', '^ ([\d]+) [\-] ([\d]+) $', '^ ([\d]+) [\-] ([\d]+) [\+] ([\d]+) $')
+RE = ('^ ([\da-z]+) $', '^ ([ud\-\+01]+) $', '^ ([\d]+) $', '^ ([\d]+) [\-] ([\d]+) $', '^ ([\d]+) [\-] ([\d]+) [\+] ([\d]+) $')
 
-mask = re.match('[\s]*'.join(RE[0].split(' ')), run.m)
+mask = re.match('[\s]*'.join(RE[0].split(' ')), run.m, re.I)
 mask = None if mask==None else mask.group(0)
 order = re.match('[\s]*'.join(RE[1].split(' ')), run.o, re.I)
 order = None if order==None else order.group(0)
 values = []
 for vv in run.v :
 	for v in vv.split(',') :
-		v1 = re.match('[\s]*'.join(RE[0].split(' ')), v)
-		v2 = re.match('[\s]*'.join(RE[2].split(' ')), v)
-		v3 = re.match('[\s]*'.join(RE[3].split(' ')), v)
+		v1 = re.match('[\s]*'.join(RE[2].split(' ')), v)
+		v2 = re.match('[\s]*'.join(RE[3].split(' ')), v)
+		v3 = re.match('[\s]*'.join(RE[4].split(' ')), v)
 		if v1!=None : values.append(int(v1.group(0)))
 		elif v2!=None :
 			for i in xrange(int(v2.group(1)), int(v2.group(2))+1) : values.append(i)
