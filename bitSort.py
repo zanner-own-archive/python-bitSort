@@ -1,4 +1,4 @@
-#!/bin/py
+#!/usr/bin/env python
 
 class bitSort :
 	def __init__ (self, mask, order, up = None, down = None) :
